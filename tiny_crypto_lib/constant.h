@@ -2,8 +2,11 @@
 #include<utility>
 #include<array>
 #include<algorithm>
+#include<string>
+
 
 //错误代码
+extern const short kE_LINT_OK;//OK
 extern const short kE_LINT_DBZ;//被零除
 extern const short kE_LINT_OFL;//上溢
 extern const short kE_LINT_UFL;//下溢
@@ -75,6 +78,13 @@ inline void RMLDZRS_L(LINT& n_) {
 	while ((DIGITS_L(n_) > 0) && (*(MSDPTR_L(n_)) == 0))
 		DECDIGITS_L(n_);
 }
+//检查格式是否合法
+inline bool vcheck_l(const LINT& n_) {
+	//上溢
+	if (DIGITS_L(n_)>kLINTMAXDIGIT)
+		return false;
+	return true;
+}
 //检查n_l_是否是偶数
 bool ISEVEN_L(const LINT& n_);
 //检查n_l_是否是奇数
@@ -117,5 +127,9 @@ void SETTWO_L(LINT& a_);
 void SET_L(LINT& a_, unsigned long ul);
 //将a_设置为Nmax
 void SETMAX_L(LINT& a_);
+//将LINT转为十六进制字符串
+std::string LINT2str_l(const LINT& a_);
+//将一个字符串以base_进制转为LINT
+LINT str2LINT_l(const std::string& s_);
 
 

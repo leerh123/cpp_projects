@@ -1,6 +1,13 @@
 #include "constant.h"
-#include"constant.h"
+#include<iostream>
+#include<string>
+#include<sstream>
+#include<stdexcept>
+#include<cctype>
+#include<algorithm>
+using namespace std;
 //错误代码
+extern const short kE_LINT_OK = 0;//OK
 extern const short kE_LINT_DBZ = -1;//被零除
 extern const short kE_LINT_OFL = -2;//上溢
 extern const short kE_LINT_UFL = -3;//下溢
@@ -63,7 +70,7 @@ bool equ_l(const LINT& a_, const LINT& b_) {
 		return true;
 	msdptr_a = &a_[la];
 	msdptr_b = &b_[lb];
-	while ((*msdptr_a == *msdptr_b) && (msdptr_b > &a_[0])) {
+	while ((*msdptr_a == *msdptr_b) && (msdptr_a > &a_[0])) {
 		msdptr_a--;
 		msdptr_b--;
 	}
@@ -92,7 +99,7 @@ int cmp_l(const LINT& a_, const LINT& b_) {
 
 	msdptr_a = &a_[la];
 	msdptr_b = &b_[lb];
-	while ((*msdptr_a == *msdptr_b) && (msdptr_b > &a_[0])) {
+	while ((*msdptr_a == *msdptr_b) && (msdptr_a > &a_[0])) {
 		msdptr_a--;
 		msdptr_b--;
 	}
@@ -181,4 +188,44 @@ void SETMAX_L(LINT& a_) {
 	for (auto begin = a_.begin() + 1; begin != a_.end(); begin++) {
 		*(begin) = USHRT_MAX;
 	}
+}
+//将LINT转为十六进制字符串
+string LINT2str_l(const LINT& a_) {
+	ostringstream result;
+	result << "0x";
+	if (a_[0] == 0) {
+		result << '0';
+	}
+	else {
+		for (lint i = a_[0]; i > 0; i--) {
+			result << hex << a_[i] << ' ';
+		}
+	}
+	return result.str();
+}
+//将一个字符串以16进制转为LINT
+LINT str2LINT_l(const string& s_){
+	LINT result = { 0x0 };
+	try {
+		if (s_.empty())
+			throw invalid_argument("s_ is empty");
+	}
+	catch (invalid_argument e) {
+		cerr << e.what();
+		return result;
+	}
+	string s = s_;
+	if (s_[0] == '0') {
+		if (s_[1] == 'x' || s_[1] == 'X')
+			s = s_.substr(2);
+	}
+	lint size = (lint)ceil((double)s.size() / 4);
+	result[0] = size;
+	for (size_t i = size; i > 1; i--) {
+		size_t j = size - i;
+		result[i] = (lint)stoi(s.substr(4 * j , 4),nullptr,16);
+	}
+	//最后一个
+	result[1] = (lint)stoi(s.substr((size - 1) * 4, min((int)s.size() - (size - 1) * 4, 4)), nullptr, 16);
+	return result;
 }
