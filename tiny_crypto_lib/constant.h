@@ -45,8 +45,14 @@ using LINTQ = std::array<lint, 1025>;//(kLINTMAXDIGIT << 2) + 1
 inline void SETDIGITS_L(LINT& n_, lint a_) {
 	n_[0] = a_;
 }
+inline void SETDIGITS_L(LINTD& n_, lint a_) {
+	n_[0] = a_;
+}
 //获取n_l_的位数
 inline lint DIGITS_L(const LINT& n_) {
+	return n_[0];
+}
+inline lint DIGITS_L(const LINTD& n_) {
 	return n_[0];
 }
 //获取最低有效位的指针
@@ -56,11 +62,23 @@ inline lint* LSDPTR_L(LINT& n_) {
 inline const lint* LSDPTR_L(const LINT& n_) {
 	return &n_[1];
 }
+inline lint* LSDPTR_L(LINTD& n_) {
+	return &n_[1];
+}
+inline const lint* LSDPTR_L(const LINTD& n_) {
+	return &n_[1];
+}
 //获取最高有效位的指针
 inline lint* MSDPTR_L(LINT& n_) {
 	return &n_[DIGITS_L(n_)];
 }
 inline const lint* MSDPTR_L(const LINT& n_) {
+	return &n_[DIGITS_L(n_)];
+}
+inline lint* MSDPTR_L(LINTD& n_) {
+	return &n_[DIGITS_L(n_)];
+}
+inline const lint* MSDPTR_L(const LINTD& n_) {
 	return &n_[DIGITS_L(n_)];
 }
 //位数减一
@@ -69,12 +87,24 @@ inline void DECDIGITS_L(LINT& n_) {
 		return;
 	n_[0]--;
 }
+inline void DECDIGITS_L(LINTD& n_) {
+	if (n_[0] == 0)
+		return;
+	n_[0]--;
+}
 //位数加一
 inline void INCDIGITS_L(LINT& n_) {
 	n_[0]++;
 }
+inline void INCDIGITS_L(LINTD& n_) {
+	n_[0]++;
+}
 //去除前导零
 inline void RMLDZRS_L(LINT& n_) {
+	while ((DIGITS_L(n_) > 0) && (*(MSDPTR_L(n_)) == 0))
+		DECDIGITS_L(n_);
+}
+inline void RMLDZRS_L(LINTD& n_) {
 	while ((DIGITS_L(n_) > 0) && (*(MSDPTR_L(n_)) == 0))
 		DECDIGITS_L(n_);
 }
@@ -91,6 +121,7 @@ bool ISEVEN_L(const LINT& n_);
 bool ISODD_L(const LINT& n_);
 //模Nmax+1
 void ANDMAX_L(LINT& n_);
+void ANDMAX_L(LINTD& n_);
 //比较两个LINT对象是否相等
 bool equ_l(const LINT& a_, const LINT& b_);
 //比较两个LINT对象(a_>b_->1; a_<b_->-1; a_==b_->0)
@@ -112,11 +143,11 @@ LINT MAX_L(const LINT& a_, const LINT& b_);
 //比较两个LINT对象的最小值
 LINT MIN_L(const LINT& a_, const LINT& b_);
 //比较a_==0
-bool EQZ_L(LINT& a_);
+bool EQZ_L(const LINT& a_);
 //比较a_==1
-bool EQONE_L(LINT& a_);
+bool EQONE_L(const LINT& a_);
 //比较a_>0
-bool GTZ_L(LINT& a_);
+bool GTZ_L(const LINT& a_);
 //将a_设为0
 void SETZERO_L(LINT& a_);
 //将a_设为1
@@ -129,7 +160,7 @@ void SET_L(LINT& a_, unsigned long ul);
 void SETMAX_L(LINT& a_);
 //将LINT转为十六进制字符串
 std::string LINT2str_l(const LINT& a_);
-//将一个字符串以base_进制转为LINT
-LINT str2LINT_l(const std::string& s_);
+//将一个字符串以16进制转为LINT
+void str2LINT_l(LINT& num_,const std::string& s_);
 
 

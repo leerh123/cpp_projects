@@ -1,5 +1,6 @@
 #include "constant.h"
 #include<iostream>
+#include<iomanip>
 #include<string>
 #include<sstream>
 #include<stdexcept>
@@ -48,6 +49,10 @@ bool ISODD_L(const LINT& n_) {
 }
 //模Nmax+1
 void ANDMAX_L(LINT& n_) {
+	SETDIGITS_L(n_, std::min(DIGITS_L(n_), (lint)kLINTMAXDIGIT));
+	RMLDZRS_L(n_);
+}
+void ANDMAX_L(LINTD& n_) {
 	SETDIGITS_L(n_, std::min(DIGITS_L(n_), (lint)kLINTMAXDIGIT));
 	RMLDZRS_L(n_);
 }
@@ -148,19 +153,19 @@ LINT MIN_L(const LINT& a_, const LINT& b_) {
 	return (LT_L(a_, b_) ? a_ : b_);
 }
 //比较a_==0
-bool EQZ_L(LINT& a_) {
+bool EQZ_L(const LINT& a_) {
 	LINT tmp;
 	u2lint_l(tmp, 0);
 	return (equ_l(a_, tmp));
 }
 //比较a_==1
-bool EQONE_L(LINT& a_) {
+bool EQONE_L(const LINT& a_) {
 	LINT tmp;
 	u2lint_l(tmp, 1);
 	return (equ_l(a_, tmp));
 }
 //比较a_>0
-bool GTZ_L(LINT& a_) {
+bool GTZ_L(const LINT& a_) {
 	LINT tmp;
 	u2lint_l(tmp, 0);
 	return (GT_L(a_, tmp));
@@ -198,34 +203,36 @@ string LINT2str_l(const LINT& a_) {
 	}
 	else {
 		for (lint i = a_[0]; i > 0; i--) {
-			result << hex << a_[i] << ' ';
+			result << uppercase << hex << setfill('0') << setw(4) << a_[i] << ' ';
 		}
 	}
 	return result.str();
 }
 //将一个字符串以16进制转为LINT
-LINT str2LINT_l(const string& s_){
-	LINT result = { 0x0 };
+void str2LINT_l(LINT& num_ , const string& s_){
+	num_ = { 0x0 };
 	try {
 		if (s_.empty())
 			throw invalid_argument("s_ is empty");
 	}
 	catch (invalid_argument e) {
 		cerr << e.what();
-		return result;
+		return ;
 	}
+	
 	string s = s_;
 	if (s_[0] == '0') {
 		if (s_[1] == 'x' || s_[1] == 'X')
 			s = s_.substr(2);
 	}
-	lint size = (lint)ceil((double)s.size() / 4);
-	result[0] = size;
-	for (size_t i = size; i > 1; i--) {
+	ostringstream os;
+	os << setfill('0') << setw(ceil((double)s.size() / 4) * 4) << s;
+	s = os.str();
+	lint size = (lint)(s.size() / 4);
+	num_[0] = size;
+	for (size_t i = size; i > 0; i--) {
 		size_t j = size - i;
-		result[i] = (lint)stoi(s.substr(4 * j , 4),nullptr,16);
+		num_[i] = (lint)stoi(s.substr(4 * j , 4),nullptr,16);
 	}
-	//最后一个
-	result[1] = (lint)stoi(s.substr((size - 1) * 4, min((int)s.size() - (size - 1) * 4, 4)), nullptr, 16);
-	return result;
+	
 }
